@@ -10,6 +10,7 @@ import (
 	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
+	"github.com/firodj/perapian/custom"
 )
 
 func main() {
@@ -104,18 +105,132 @@ func main() {
 		widget.NewSelect([]string{"MIT"}, nil),
 	)
 
+	pathPageCreate := func() *fyne.Container {
+		treeParams := widget.NewList(
+			func() int {
+				return 2
+			},
+			func() fyne.CanvasObject {
+				return container.NewVBox(
+					widget.NewLabel("Label"),
+					container.New(layout.NewFormLayout(),
+						widget.NewLabel("in"), widget.NewEntry(),
+						widget.NewLabel("description"), widget.NewEntry(),
+						widget.NewLabel(""), widget.NewCheck("required", nil),
+					),
+				)
+			},
+			func(id int, o fyne.CanvasObject) {
+				rootContainer := o.(*fyne.Container)
+				label := rootContainer.Objects[0].(*widget.Label)
+				text := ""
+				if id == 0 {
+					text = "limit"
+				} else if id == 1 {
+					text = "page"
+				}
+				label.SetText(text)
+			},
+		)
+		pathPage := container.NewBorder(
+			container.New(
+				layout.NewFormLayout(),
+				widget.NewLabel("summary"), widget.NewEntry(),
+				widget.NewLabel("operationId"), widget.NewEntry(),
+				widget.NewLabel("tags"), widget.NewSelectEntry([]string{}),
+			),
+			nil, nil, nil,
+			container.NewBorder(
+				container.NewHBox(widget.NewLabel("Parameters"),
+					layout.NewSpacer(),
+					custom.NewContextMenuButton(":", fyne.NewMenu("A", fyne.NewMenuItem("B", nil))),
+				),
+				nil, nil, nil,
+				treeParams,
+			),
+		)
+		return pathPage
+	}
+
 	magicButton := widget.NewButton("Hi!", nil)
 	magicButton.OnTapped = func() {
 		magicButton.SetText("Hi Welcome :)")
 	}
 
+	menuItem1 := fyne.NewMenuItem("A", nil)
+	menuItem2 := fyne.NewMenuItem("B", nil)
+	menuItem3 := fyne.NewMenuItem("C", nil)
+	menu := fyne.NewMenu("File", menuItem1, menuItem2, menuItem3)
+
+	schemaPageCreate := func() *fyne.Container {
+		return container.NewBorder(
+			nil, nil, nil, nil,
+			widget.NewTree(
+				func(id widget.TreeNodeID) []widget.TreeNodeID {
+					switch id {
+					case "":
+						return []widget.TreeNodeID{"root"}
+					case "root":
+						return []widget.TreeNodeID{"id", "name", "tag"}
+					}
+					return []widget.TreeNodeID{}
+				},
+				func(id widget.TreeNodeID) bool {
+					switch id {
+					case "":
+						return true
+					case "root":
+						return true
+					}
+					return false
+				},
+				func(branch bool) fyne.CanvasObject {
+					return container.NewHBox(
+						widget.NewLabel("Name"),
+						layout.NewSpacer(),
+						widget.NewSelect([]string{"boolean", "integer", "integer/int32", "integer/int64", "number", "number/float", "number/double", "string", "string/password", "string/uuid", "object", "array"}, nil),
+						custom.NewContextMenuButton(":", menu),
+					)
+				},
+				func(id widget.TreeNodeID, branch bool, o fyne.CanvasObject) {
+					rootContainer := o.(*fyne.Container)
+
+					labelName := rootContainer.Objects[0].(*widget.Label)
+					labelName.SetText(id)
+					buttonType := rootContainer.Objects[2].(*widget.Select)
+					// buttonContext := rootContainer.Objects[3].(*custom.ContextMenuButton)
+
+					switch id {
+					case "root":
+						buttonType.SetSelected("object")
+					case "id":
+						buttonType.SetSelected("integer/int64")
+					default:
+						buttonType.SetSelected("string")
+					}
+				},
+			),
+		)
+
+	}
+
 	tree.OnSelected = func(id widget.TreeNodeID) {
 		fmt.Println("id", id)
-		if id == "info" {
+		switch id {
+		case "info":
 			rightContent.Objects = nil
 			rightContent.Add(infoPage)
 			// rightContent.Refresh()
-		} else {
+
+		case "GET/pets":
+			rightContent.Objects = nil
+			rightContent.Add(pathPageCreate())
+
+		case "/pets":
+			rightContent.Objects = nil
+			rightContent.Add(schemaPageCreate())
+
+		default:
 			rightContent.Objects = nil
 			rightContent.Refresh()
 		}
