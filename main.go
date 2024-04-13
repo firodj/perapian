@@ -111,25 +111,26 @@ func main() {
 				return 2
 			},
 			func() fyne.CanvasObject {
-				return container.NewVBox(
-					widget.NewLabel("Label"),
-					container.New(layout.NewFormLayout(),
-						widget.NewLabel("in"), widget.NewEntry(),
-						widget.NewLabel("description"), widget.NewEntry(),
-						widget.NewLabel(""), widget.NewCheck("required", nil),
-					),
+				return container.New(layout.NewFormLayout(),
+					widget.NewLabel("name"),
+					container.NewBorder(nil, nil, nil, widget.NewCheck("required", nil), widget.NewEntry()),
+					widget.NewLabel("in"), widget.NewSelect([]string{"query", "path", "header", "cookie"}, nil),
+					widget.NewLabel("description"), widget.NewEntry(),
 				)
 			},
 			func(id int, o fyne.CanvasObject) {
 				rootContainer := o.(*fyne.Container)
-				label := rootContainer.Objects[0].(*widget.Label)
-				text := ""
-				if id == 0 {
-					text = "limit"
-				} else if id == 1 {
-					text = "page"
+				nameContainer := rootContainer.Objects[1].(*fyne.Container)
+
+				if nameEntry, ok := nameContainer.Objects[0].(*widget.Entry); ok {
+					text := ""
+					if id == 0 {
+						text = "limit"
+					} else if id == 1 {
+						text = "page"
+					}
+					nameEntry.SetText(text)
 				}
-				label.SetText(text)
 			},
 		)
 		pathPage := container.NewBorder(
@@ -235,6 +236,7 @@ func main() {
 			rightContent.Refresh()
 		}
 	}
+	tree.OpenAllBranches()
 
 	w.SetContent(container.NewHSplit(
 		sideMenu,
