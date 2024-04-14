@@ -1,6 +1,11 @@
 package app
 
 import (
+	"fmt"
+	"slices"
+	"strings"
+
+	"github.com/firodj/perapian/common"
 	"github.com/getkin/kin-openapi/openapi3"
 
 	"fyne.io/fyne/v2"
@@ -65,7 +70,16 @@ func (a *App) Load(filename string) error {
 
 func (a *App) onDocTreeSelected(id widget.TreeNodeID) {
 	a.RightContent.Objects = nil
+	pathparts := strings.SplitN(id, "/", 2)
 	if id == "info" {
 		a.RightContent.Add(CreateInfoPage())
+	} else if strings.HasPrefix(id, "/") {
+		fmt.Printf("select path: %s\n", id)
+	} else {
+		if len(pathparts) == 2 && slices.Contains(common.HttpMethods, pathparts[0]) {
+			meth := pathparts[0]
+			path := "/" + pathparts[1]
+			fmt.Printf("ops: %s, path: %s\n", meth, path)
+		}
 	}
 }

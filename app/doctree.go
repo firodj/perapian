@@ -1,12 +1,15 @@
 package app
 
 import (
+	"fmt"
 	"strings"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
+
+	"github.com/firodj/perapian/common"
 )
 
 type docTree struct {
@@ -43,11 +46,31 @@ func (t *docTree) OnChildUIDs(id widget.TreeNodeID) []widget.TreeNodeID {
 		return []widget.TreeNodeID{"info", "paths"}
 	}
 
-	if GetMainApp().Doc == nil {
+	doc := GetMainApp().Doc
+
+	if doc == nil {
 		return SampleOnChildUIDs(id)
 	}
 
-	return []string{}
+	result := []widget.TreeNodeID{}
+	if doc.Paths != nil {
+		if id == "paths" {
+			result = append(result, doc.Paths.InMatchingOrder()...)
+		} else if strings.HasPrefix(id, "/") {
+			path := doc.Paths.Find(id)
+			if path != nil {
+				opeations := path.Operations()
+				for _, method := range common.HttpMethods {
+					if _, ok := opeations[method]; ok {
+						key := fmt.Sprintf("%s%s", method, id)
+						result = append(result, key)
+					}
+				}
+			}
+		}
+	}
+
+	return result
 }
 
 func (t *docTree) OnIsBranch(id widget.TreeNodeID) bool {

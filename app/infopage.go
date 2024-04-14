@@ -9,20 +9,9 @@ import (
 	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/widget"
 	"github.com/getkin/kin-openapi/openapi3"
-)
 
-// https://opensource.org/license
-var SPDXIds = []string{
-	"MIT",
-	"Apache-2.0",
-	"MPL-2.0",
-	"LGPL-3.0-only",
-	"GPL-3.0-only",
-	"BSD-3-Clause",
-	"CDDL-1.0",
-	"EPL-2.0",
-	"Unlicense",
-}
+	"github.com/firodj/perapian/common"
+)
 
 func CreateInfoPage() *fyne.Container {
 	doc := GetMainApp().Doc
@@ -35,7 +24,7 @@ func CreateInfoPage() *fyne.Container {
 	}
 
 	licenseBind := binding.BindString(&doc.Info.License.Name)
-	licenseSelect := widget.NewSelectEntry(SPDXIds)
+	licenseSelect := widget.NewSelectEntry(common.SPDXIds)
 	licenseSelect.OnChanged = func(text string) {
 		err := licenseBind.Set(text)
 		if err != nil {
