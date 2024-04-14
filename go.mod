@@ -4,9 +4,9 @@ go 1.22.2
 
 require (
 	fyne.io/fyne/v2 v2.4.4
-	github.com/davecgh/go-spew v1.1.1
 	github.com/getkin/kin-openapi v0.124.0
 	github.com/roemer/gotaskr v0.4.2
+	github.com/stretchr/testify v1.8.4
 )
 
 require (
@@ -18,6 +18,7 @@ require (
 	github.com/andybalholm/brotli v1.1.0 // indirect
 	github.com/cloudflare/circl v1.3.3 // indirect
 	github.com/cyphar/filepath-securejoin v0.2.4 // indirect
+	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dsnet/compress v0.0.2-0.20210315054119-f66993602bf5 // indirect
 	github.com/emirpasic/gods v1.18.1 // indirect
 	github.com/fatih/color v1.16.0 // indirect
@@ -69,7 +70,6 @@ require (
 	github.com/skeema/knownhosts v1.2.1 // indirect
 	github.com/srwiley/oksvg v0.0.0-20221011165216-be6e8873101c // indirect
 	github.com/srwiley/rasterx v0.0.0-20220730225603-2ab79fcdd4ef // indirect
-	github.com/stretchr/testify v1.8.4 // indirect
 	github.com/tevino/abool v1.2.0 // indirect
 	github.com/ulikunitz/xz v0.5.11 // indirect
 	github.com/xanzy/ssh-agent v0.3.3 // indirect
